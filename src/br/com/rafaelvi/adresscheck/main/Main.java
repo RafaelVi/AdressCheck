@@ -18,12 +18,9 @@ public class Main {
         try {
             Connector connector = new Connector();
             String response = connector.sendRequest(input);
-            System.out.println(response);
-
-            CEP cep = connector.deserialize(response);
-            System.out.println(cep);
-            if (cep.cep() != null) {
-                System.out.println("oi");
+            
+            if (response != null) {
+                CEP cep = connector.deserialize(response);
                 Adress adress = new Adress(cep);
                 Builder builder = new Builder();
                 builder.buildFile(connector.serialize(adress));

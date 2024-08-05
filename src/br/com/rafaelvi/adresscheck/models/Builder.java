@@ -7,6 +7,7 @@ public class Builder {
 
     public void buildFile(String json){
         try {
+            System.out.println(json);
         FileWriter fileWriter = new FileWriter("adress.json");
             fileWriter.write(json);
             fileWriter.close();

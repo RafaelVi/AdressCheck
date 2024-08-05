@@ -16,25 +16,34 @@ public class Connector {
     HttpResponse<String> response;
     Gson gson = new GsonBuilder()
             .setPrettyPrinting()
-            .create();;
+            .create();
+    ;
 
-    public String sendRequest(String adress){
+    public String sendRequest(String adress) {
         request = HttpRequest.newBuilder()
-                .uri(URI.create("https://viacep.com.br/ws/" + adress +"/json/"))
+                .uri(URI.create("https://viacep.com.br/ws/" + adress + "/json/"))
                 .build();
         System.out.println();
         HttpResponse<String> response;
         try {
             response = client
                     .send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() >= 400) {
+                throw new UnvalidResponseError("Requisition failed, status: " + response.statusCode());
+            } else {
+                return response.body();
+            }
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
+        } catch (UnvalidResponseError e) {
+            System.out.println(e.getMessage());
         }
 
-        return response.body();
+        return null;
     }
 
-    public CEP deserialize(String json) throws IllegalStateException{
+
+    public CEP deserialize(String json) throws IllegalStateException {
         try {
             return gson.fromJson(json, CEP.class);
         } catch (IllegalStateException | JsonSyntaxException e) {
@@ -43,7 +52,7 @@ public class Connector {
         }
     }
 
-    public String serialize(Adress adress){
+    public String serialize(Adress adress) {
         return gson.toJson(adress);
     }
 }
